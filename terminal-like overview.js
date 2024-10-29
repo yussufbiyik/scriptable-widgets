@@ -6,7 +6,7 @@ const timetable = [
     {
         name: "[⚛️] Elektromanyetik Alanlar",
         todos: [],
-        day: 1,
+        day: 2,
         room: "4-B",
         time: "09:30-12:15",
     },
@@ -21,14 +21,12 @@ const defaultFont = new Font("Menlo", 11);
 // Get last listened song from last.fm
 async function getSong(){
     const lastfmDetails = {
-        user: "your lastfm username",
-        api_key: "api key.. duh",
+        user: "username",
+        api_key: "apiKey",
     }
-    // Make sure your recent listened activity is public on last.fm to avoid auth stuff.
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${lastfmDetails.user}&api_key=${lastfmDetails.api_key}&format=json&limit=1`;
     const req = new Request(url);
     const res = await req.loadJSON();
-    console.log(res);
     const song = `${res.recenttracks.track[0].artist["#text"]} - ${res.recenttracks.track[0].name}`;
     return song;
 }
@@ -43,12 +41,13 @@ function addWidgetLine(widget, content, isCentered = false){
 // Create Widget
 async function createWidget(){
     const widget = new ListWidget();
-    const name = addWidgetLine(widget, "Your Name");
+    const user = "yourname"
+    const name = addWidgetLine(widget, `$${user}@${Device.model()} ./overview.txt`);
     // Overview
     const classesOfTheDay = timetable.filter(c => c.day === new Date().getDay());
     const overviewSeperator = addWidgetLine(widget, seperator("Overview"), true);
     const overviewInfo = [
-        ` [🔋] Battery: %${(Device.batteryLevel()*100).toFixed(0)} (${(Device.isCharging) ? "Charging" : "Dechargeing"})`,
+        ` [🔋] Battery: %${(Device.batteryLevel()*100).toFixed(0)} (${(Device.isCharging) ? "Charging" : "Decharging"})`,
         ` [📅] Date & Time: ${new Date().toLocaleDateString()}`,
         ` [🏫] Class Count: ${(classesOfTheDay.length == 0)?0:classesOfTheDay.length}`,
         ` [💿] ${await getSong()}`,
